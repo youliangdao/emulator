@@ -15,9 +15,18 @@ void mov_rm32_r32(Emulator* emu)
   emu->eip += 1;
   ModRM modrm;
   parse_modrm(emu, &modrm);
-  uint32_t value = emu->registers[modrm.reg_index];
 
+  uint32_t value = emu->registers[modrm.reg_index];
   set_rm32(emu, &modrm, value);
+}
+
+void mov_r32_rm32(Emulator* emu)
+{
+  emu->eip += 1;
+  ModRM modrm;
+  parse_modrm(emu, &modrm);
+
+  set_register32(emu, modrm.reg_index, get_rm32(emu, &modrm));
 }
 
 void mov_rm32_imm32(Emulator* emu)
@@ -58,6 +67,7 @@ void init_instructions(void)
   memset(instructions, 0, sizeof(instructions));
 
   instructions[0x89] = mov_rm32_r32;
+  instructions[0x8B] = mov_r32_rm32;
   for (int i = 0; i < 8; i++)
   {
     instructions[0xB8 + i] = mov_r32_imm32;

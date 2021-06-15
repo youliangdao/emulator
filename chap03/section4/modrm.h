@@ -22,4 +22,6 @@ typedef struct
 
 void parse_modrm(Emulator* emu, ModRM* modrm);
 void set_rm32(Emulator* emu, ModRM* modrm, uint32_t value);
+void set_r32(Emulator* emu, ModRM* modrm, uint32_t value);
+uint32_t get_rm32(Emulator* emu, ModRM* modrm);
 uint32_t calc_memory_address(Emulator* emu, ModRM* modrm);
