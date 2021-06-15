@@ -6,6 +6,7 @@
 #include "emulator.h"
 #include "emulator_function.h"
 #include "instruction.h"
+#include "modrm.h"
 
 #define MEMORY_SIZE (1024 * 1024)
 
