@@ -10,9 +10,6 @@ CFLAGS += -Wall
 .PHONY: all run
 all: $(TARGET) $(PROGRAM)
 
-run: $(TARGET) $(PROGRAM)
-	./$(TARGET) $(PROGRAM)
-
 %.bin: %.asm
 	$(ASM) -f bin -o $@ $<
 
