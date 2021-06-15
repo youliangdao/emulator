@@ -102,7 +102,7 @@ void short_jump(Emulator* emu)
 void inc_rm32(Emulator* emu, ModRM* modrm)
 {
   uint32_t rm32 = get_rm32(emu, modrm);
-  set_rm32(emu, modrm, rm32++);
+  set_rm32(emu, modrm, rm32 + 1);
 }
 
 void code_ff(Emulator* emu)
@@ -121,7 +121,6 @@ void code_ff(Emulator* emu)
     exit(1);
   }
 }
-
 
 void init_instructions(void)
 {
