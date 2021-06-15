@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
 #include "emulator.h"
 #include "emulator_function.h"
 #include "instruction.h"
