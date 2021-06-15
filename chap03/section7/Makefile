@@ -37,4 +37,4 @@ $(TARGET) : $(OBJS)
 	$(CC) -o $@ $(OBJS)
 
 clean:
-	rm -f $(TARGET) $(PROGRAM) $(OBJS)
+	rm -f $(TARGET) $(PROGRAM) $(OBJS) leave-test.o crt0.o
