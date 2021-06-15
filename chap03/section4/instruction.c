@@ -20,14 +20,14 @@ void mov_rm32_r32(Emulator* emu)
   set_rm32(emu, &modrm, value);
 }
 
-mov_rm32_imm32(Emulator* emu)
+void mov_rm32_imm32(Emulator* emu)
 {
   emu->eip += 1;
   ModRM modrm;
   parse_modrm(emu, &modrm);
   uint32_t value = get_code32(emu, 0);
-
   emu->eip += 4;
+
   set_rm32(emu, &modrm, value);
 }
 
