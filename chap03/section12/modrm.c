@@ -96,3 +96,20 @@ uint32_t get_r32(Emulator* emu, ModRM* modrm)
 {
     return get_register32(emu, modrm->reg_index);
 }
+
+uint32_t get_rm8(Emulator* emu, ModRM* modrm)
+{
+    if (modrm->mod == 3)
+    {
+        return get_register8(emu, modrm->rm);
+    } else
+    {
+        uint32_t address = calc_memory_address(emu, modrm);
+        return get_memory8(emu, address);
+    }
+}
+
+void set_r8(Emulator* emu, ModRM* modrm, uint32_t value)
+{
+  set_register8(emu, modrm->reg_index, value);
+}
