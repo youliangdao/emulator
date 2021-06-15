@@ -107,6 +107,7 @@ void inc_rm32(Emulator* emu, ModRM* modrm)
 
 void code_ff(Emulator* emu)
 {
+  emu->eip += 1;
   ModRM modrm;
   parse_modrm(emu, &modrm);
 
@@ -118,7 +119,6 @@ void code_ff(Emulator* emu)
 
   default:
     printf("オペコードFFの命令は実装されていません\n");
-    printf("%x", modrm.opecode);
     exit(1);
   }
 }
