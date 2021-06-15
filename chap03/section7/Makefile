@@ -22,7 +22,7 @@ $(PROGRAM_LEAVE) : crt0.o leave-test.o
 	$(LD) -m elf_i386 --entry=start --oformat=binary -Ttext 0x7c00 -o $@ $^
 
 leave-test.o : leave-test.c
-	$(CC) -O0 -march=i386 -m32 -nostdlib -fno-asynchronous-unwind-tabled -g -fno-stack-protector -fno-pie -c -o $@ $<
+	$(CC) -O0 -march=i386 -m32 -nostdlib -fno-asynchronous-unwind-tables -g -fno-stack-protector -fno-pie -c -o $@ $<
 
 crt0.o : crt0.asm
 	$(ASM) -f elf $<
