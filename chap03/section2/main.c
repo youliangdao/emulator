@@ -71,6 +71,11 @@ uint32_t get_code32(Emulator* emu, int index)
   return ret;
 }
 
+int32_t get_sign_code32(Emulator* emu, int index)
+{
+  return (int32_t)get_code32(emu, index);
+}
+
 void mov_r32_imm32(Emulator* emu)
 {
   uint8_t reg = get_code8(emu, 0) - 0xB8;
@@ -80,10 +85,16 @@ void mov_r32_imm32(Emulator* emu)
   emu->eip += 5;
 }
 
+void near_jump(Emulator* emu)
+{
+  int32_t diff = get_sign_code32(emu, 1);
+  emu->eip += (diff + 5);
+}
+
 void short_jump(Emulator* emu)
 {
   int8_t diff = get_sign_code8(emu, 1);
-  emu->eip += diff + 2;
+  emu->eip += (diff + 2);
 }
 
 //1バイト機械語に対応する関数のポインタを格納した関数ポインタテーブルを作成
@@ -98,6 +109,7 @@ void init_instructions(void)
     instructions[0xB8 + i] = mov_r32_imm32;
   }
 
+  instructions[0xE9] = near_jump;
   instructions[0xEB] = short_jump;
 
 }
@@ -116,13 +128,13 @@ int main(int argc, char const *argv[])
 
 
   binary = fopen(argv[1], "rb");
-  emu = create_emu(sizeof(Emulator), 0x0000, 0x7c00);
+  emu = create_emu(sizeof(Emulator), 0x7c00, 0x7c00);
   if (binary == NULL)
   {
     printf("%sファイルが開けません\n", argv[1]);
     exit(1);
   }
-  fread(emu->memory, 1, 0x200, binary);
+  fread(emu->memory + 0x7c00, 1, 0x200, binary);
   fclose(binary);
 
 
