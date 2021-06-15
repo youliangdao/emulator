@@ -65,22 +65,46 @@ void set_rm32(Emulator* emu, ModRM* modrm, uint32_t value)
 /* ModRMとディスプレースメントの値からメモリアドレスを計算する */
 uint32_t calc_memory_address(Emulator* emu, ModRM* modrm)
 {
-  uint32_t ret = 0;
-  if (modrm->rm != 0x04 && modrm->mod == 0x01)
+  if (modrm->mod == 0)
   {
-    ret = emu->registers[modrm->rm] + modrm->disp8;
-    return ret;
-  } else if (modrm->rm != 0x04 && modrm->mod == 0x02)
+    if (modrm->rm == 4)
+    {
+      printf("ModRM mod = 0 rm = 4 はSIBを用いるため、ここでは実装されていません\n");
+      exit(0);
+    } else if (modrm->rm == 5)
+    {
+      return modrm->disp32;
+    } else
+    {
+      return get_register32(emu, modrm->rm);
+    }
+
+  }
+  else if (modrm->mod == 1)
   {
-    ret = emu->registers[modrm->rm] + modrm->disp32;
-    return ret;
-  }else if (modrm->rm != 0x04 && modrm->rm == 0x05 && modrm->mod == 0x00)
+    if (modrm->rm == 4)
+    {
+      printf("ModRM mod = 1 rm = 4 はSIBを用いるため、ここでは実装されていません\n");
+      exit(0);
+    } else
+    {
+      return get_register32(emu, modrm->rm) + modrm->disp8;
+    }
+  }
+  else if (modrm->mod == 2)
   {
-    ret = emu->memory[modrm->disp8];
-    return ret;
-  } else if (modrm->rm != 0x04 && modrm->rm != 0x05 && modrm->mod == 0x00)
+    if (modrm->rm == 4)
+    {
+      printf("ModRM mod = 2 rm = 4 はSIBを用いるため、ここでは実装されていません\n");
+      exit(0);
+    } else
+    {
+      return get_register32(emu, modrm->rm) + modrm->disp32;
+    }
+  }
+  else
   {
-    ret = emu->registers[modrm->rm];
-    return ret;
+    printf("ModRM mod =3 はメモリアドレスではなくレジスタを示すため実装されていません\n");
+    exit(0);
   }
 }
