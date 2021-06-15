@@ -66,9 +66,6 @@ void update_eflags_sub(Emulator* emu, uint32_t v1, uint32_t v2, uint64_t result)
 void set_register8(Emulator* emu, int index, uint8_t value);
 
 /* レジスタの下位8bitに格納されている8bit値を取得 */
-uint8_t get_register8(Emulator* emu, int index)
-{
-
-}
+uint8_t get_register8(Emulator* emu, int index);
 
 #endif
