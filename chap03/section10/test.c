@@ -1,4 +1,4 @@
-int sum(int a, int b){
+int main(int a, int b){
   int sum;
   sum = 0;
   while (a <= b){
