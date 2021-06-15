@@ -3,7 +3,7 @@ PROGRAM = helloworld.bin
 OBJS = main.o
 
 CC = gcc
-CFLAGS += -O2 -Wall -Wextra
+CFLAGS += -Wall 
 
 .PHONY: all run
 all : $(TARGET)

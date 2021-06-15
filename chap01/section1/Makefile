@@ -7,7 +7,7 @@ LDFLAGS += -m elf_i386 --entry=func --oformat=binary
 
 .PHONY: all
 all: $(TARGET)
-	hexdump -v -e '/1 "%02x"' $(TARGET)
+	hexdump -v -e'/1 "%02x"' $(TARGET)
 
 %.bin: %.o
 	$(LD) $(LDFLAGS) -o $@ $<
