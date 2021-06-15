@@ -82,7 +82,7 @@ void mov_r32_imm32(Emulator* emu)
 
 void short_jump(Emulator* emu)
 {
-  int8_t diff = get_sign_code8(emu, 0);
+  int8_t diff = get_sign_code8(emu, 1);
   emu->eip += diff + 2;
 }
 
@@ -136,7 +136,7 @@ int main(int argc, char const *argv[])
 
     if (instructions[code] == NULL)
     {
-      printf("命令が実装されていません：%x\n", code);
+      printf("\n命令が実装されていません：%x\n", code);
       break;
     }
 
