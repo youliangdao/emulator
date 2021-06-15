@@ -1,60 +1,88 @@
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
+
 #include "emulator.h"
-#include "modrm.h"
 #include "emulator_function.h"
+#include "instruction.h"
+#include "modrm.h"
 
-void parse_modrm(Emulator* emu, ModRM* modrm){
+/* この関数を呼び出す際は、プログラムカウンタはModR/Mバイトを指している状態で
+必要がある */
+void parse_modrm(Emulator* emu, ModRM* modrm)
+{
   uint8_t code;
-  //全部を0に初期化
-  memset(modrm, 0, sizeof(ModRM));
 
-  //ModR/Mバイトの各ビットを取り出してmod,opecode,rmに書き込む
+  memset(modrm, 0, sizeof(ModRM));  //全部を0に初期化
+
+  //mod, opecode(reg_index), rmを格納
   code = get_code8(emu, 0);
-  modrm->mod = ((code & 0xc0) >> 6);
+  modrm->mod = ((code & 0xC0) >> 6);
   modrm->opecode = ((code & 0x38) >> 3);
-  modrm->rm = code & 0x07;
+  modrm->rm = (code & 0x07);
 
-  //プログラムカウンタを1バイト分進める
+  //sib格納
   emu->eip += 1;
 
-  //SIBの存在条件を判定し、存在するなら読み取ってsibに書き込む
-  if (modrm->mod != 3 && modrm->rm == 4)
+  if (modrm->mod != 3 && modrm->rm == 0x04)
   {
-    modrm->sib = get_code8(emu,0);
+    modrm->sib = get_code8(emu, 0);
     emu->eip += 1;
   }
 
-  //ディスプレートメントの有無を判定し、ビット幅に応じて書き込む
-  if ((modrm->mod == 3 && modrm->rm == 5) || modrm->mod == 2)
+  //disp8もしくはdisp32を格納
+  if (modrm->mod == 0x02)
   {
-    modrm->disp32 = get_sign_code32(emu, 0);
+    modrm->disp32 = get_code32(emu, 0);
     emu->eip += 4;
-  } else if (modrm->mod == 1)
+  }
+  else if (modrm->mod == 0x01)
   {
-    modrm->disp8 = get_sign_code8(emu, 0);
+    modrm->disp8 = get_code8(emu, 0);
     emu->eip += 1;
+  }
+  else if (modrm->mod == 0x00 && modrm->rm == 0x05)
+  {
+    modrm->disp32 = get_code32(emu, 0);
+    emu->eip += 4;
   }
 }
 
-
-void set_rm32(Emulator* emu, ModRM* modrm, uint32_t value){
-  if (modrm->mod == 3)
+/* ModRMで指定したレジスタもしくはメモリアドレスに32bitの値を格納する */
+void set_rm32(Emulator* emu, ModRM* modrm, uint32_t value)
+{
+  if (modrm->mod == 0x03)
   {
     set_register32(emu, modrm->rm, value);
   } else
   {
     uint32_t address = calc_memory_address(emu, modrm);
-    set_memory32(emu, address, value);
+    set_memory32(emu, value, address);
   }
-
 }
 
-uint32_t calc_memory_address(Emulator* emu, ModRM* modrm){
+/* ModRMで指定したレジスタもしくはメモリアドレスから32bitの値を取得する */
+uint32_t get_rm32(Emulator* emu, ModRM* modrm)
+{
+  if (modrm->mod == 0x03)
+  {
+    return get_register32(emu, modrm->rm);
+  } else
+  {
+    uint32_t address = calc_memory_address(emu, modrm);
+    return get_memory32(emu, address);
+  }
+}
+
+/* ModRMとディスプレースメントの値からメモリアドレスを計算する */
+uint32_t calc_memory_address(Emulator* emu, ModRM* modrm)
+{
   if (modrm->mod == 0)
   {
     if (modrm->rm == 4)
     {
-      printf("not implemented ModRM mod = 0, rm = 4\n");
+      printf("ModRM mod = 0 rm = 4 はSIBを用いるため、ここでは実装されていません\n");
       exit(0);
     } else if (modrm->rm == 5)
     {
@@ -63,55 +91,33 @@ uint32_t calc_memory_address(Emulator* emu, ModRM* modrm){
     {
       return get_register32(emu, modrm->rm);
     }
+
   }
   else if (modrm->mod == 1)
   {
     if (modrm->rm == 4)
     {
-      printf("not implemented ModRM mod = 1, rm = 4\n");
+      printf("ModRM mod = 1 rm = 4 はSIBを用いるため、ここでは実装されていません\n");
       exit(0);
-    }
-    else
+    } else
     {
       return get_register32(emu, modrm->rm) + modrm->disp8;
     }
-
   }
   else if (modrm->mod == 2)
   {
     if (modrm->rm == 4)
     {
-      printf("not implemented ModRM mod = 1, rm = 4\n");
+      printf("ModRM mod = 2 rm = 4 はSIBを用いるため、ここでは実装されていません\n");
       exit(0);
-    }
-    else
+    } else
     {
       return get_register32(emu, modrm->rm) + modrm->disp32;
     }
   }
   else
   {
-    printf("not implemented ModRM mod = 3\n");
+    printf("ModRM mod =3 はメモリアドレスではなくレジスタを示すため実装されていません\n");
     exit(0);
   }
-}
-
-uint32_t get_rm32(Emulator* emu, ModRM* modrm) {
-  if (modrm->rm == 3)
-  {
-    return get_register32(emu, modrm->rm);
-  }
-  else
-  {
-    uint32_t address = calc_memory_address(emu, modrm);
-    return get_memory32(emu, address);
-  }
-}
-
-void set_r32(Emulator* emu, ModRM* modrm, uint32_t value){
-  set_register32(emu, modrm->reg_index, value);
-}
-
-void get_r32(Emulator* emu, ModRM* modrm){
-  return get_register32(emu, modrm->reg_index);
 }
