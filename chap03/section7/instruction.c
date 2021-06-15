@@ -52,6 +52,15 @@ void pop_r32(Emulator* emu)
   emu->eip += 1;
 }
 
+void add_rm32_imm8(Emulator* emu, ModRM* modrm)
+{
+  uint32_t imm8 = (int32_t)get_code8(emu, 0);
+  uint32_t rm32 = get_rm32(emu, modrm);
+
+  emu->eip += 1;
+  set_rm32(emu, modrm, imm8 + rm32);
+}
+
 void sub_rm32_imm8(Emulator* emu, ModRM* modrm)
 {
   uint32_t imm8 = (int32_t)get_sign_code8(emu, 0);
@@ -59,6 +68,20 @@ void sub_rm32_imm8(Emulator* emu, ModRM* modrm)
   emu->eip += 1;
 
   set_rm32(emu, modrm, rm32 - imm8);
+}
+
+void push_imm32(Emulator* emu)
+{
+  uint32_t imm32 = get_code32(emu, 1);
+  push32(emu, imm32);
+  emu->eip += 5;
+}
+
+void push_imm8(Emulator* emu)
+{
+  uint8_t imm8 = get_code8(emu, 1);
+  push32(emu, imm8);
+  emu->eip += 2;
 }
 
 void code_83(Emulator* emu)
@@ -69,6 +92,9 @@ void code_83(Emulator* emu)
 
   switch (modrm.opecode)
   {
+  case 0:
+    add_rm32_imm8(emu, &modrm);
+    break;
   case 5:
     sub_rm32_imm8(emu, &modrm);
     break;
@@ -192,6 +218,8 @@ void init_instructions(void)
     instructions[0x58 + i] = pop_r32;
   }
 
+  instructions[0x68] = push_imm32;
+  instructions[0x6A] = push_imm8;
 
   instructions[0x83] = code_83;
   instructions[0x89] = mov_rm32_r32;
