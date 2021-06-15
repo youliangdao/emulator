@@ -67,11 +67,11 @@ uint32_t get_rm32(Emulator* emu, ModRM* modrm)
 {
   if (modrm->mod == 0x03)
   {
-    get_register32(emu, modrm->rm);
+    return get_register32(emu, modrm->rm);
   } else
   {
     uint32_t address = calc_memory_address(emu, modrm);
-    get_memory32(emu, address);
+    return get_memory32(emu, address);
   }
 }
 
