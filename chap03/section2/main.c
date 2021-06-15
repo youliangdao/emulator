@@ -55,6 +55,31 @@ uint32_t get_code8(Emulator* emu, int index)
   return emu->memory[emu->eip + index];
 }
 
+uint32_t get_code32(Emulator* emu, int index)
+{
+  uint32_t ret = 0;
+  for (int i = 0; i < 4; i++)
+  {
+    ret |= get_code8(emu, index + i) << (8 * i);
+  }
+
+  return ret;
+}
+
+void mov_r32_imm32(Emulator* emu)
+{
+  uint8_t reg = get_code8(emu, 0) - 0xB8;
+  uint32_t value = get_code32(emu, 1);
+
+  emu->registers[reg] = value;
+  emu->eip += 5;
+}
+
+void short_jump(Emulator* emu)
+{
+
+}
+
 //1バイト機械語に対応する関数のポインタを格納した関数ポインタテーブルを作成
 typedef void instruction_func_t(Emulator*);
 instruction_func_t* instructions[256];
@@ -62,6 +87,11 @@ instruction_func_t* instructions[256];
 void init_instructions(void)
 {
   memset(instructions, 0, sizeof(instructions));
+  for (int i = 0; i < 8; i++)
+  {
+    instructions[0xB8 + i] = mov_r32_imm32;
+  }
+
 }
 
 
@@ -94,7 +124,8 @@ int main(int argc, char const *argv[])
   {
     uint8_t code = get_code8(emu, 0);
 
-    printf("現在のプログラムカウンタと実行される機械語を出力します\nEIP = %08x, Code = %02x\n", emu->eip, code);
+    printf("現在のプログラムカウンタと実行される機械語を出力します\n
+            EIP = %08x, Code = %02x\n", emu->eip, code);
 
     if (instructions[code] == NULL)
     {
