@@ -45,9 +45,9 @@ void dump_registers(Emulator* emu)
 {
   for (int i = 0; i < REGISTER_COUNT; i++)
   {
-    printf("%s = %08x", registers_name[i], emu->registers[i]);
+    printf("%s = %08x\n", registers_name[i], emu->registers[i]);
   }
-  printf("EIP = %08x", emu->eip);
+  printf("EIP = %08x\n", emu->eip);
 }
 
 uint32_t get_code8(Emulator* emu, int index)
@@ -87,6 +87,7 @@ int main(int argc, char const *argv[])
   fread(emu->memory, 1, 0x200, binary);
   fclose(binary);
 
+  /*
   while (emu->eip < MEMORY_SIZE)
   {
     uint32_t code = get_code8(emu, 0);
@@ -98,7 +99,9 @@ int main(int argc, char const *argv[])
       break;
     }
   }
+  */
 
+  printf("test\n");
   dump_registers(emu);
   destroy_emu(emu);
   return 0;
