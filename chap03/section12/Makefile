@@ -1,5 +1,5 @@
 TARGET = px86
-PROGRAM = out.bin
+PROGRAM = in.bin out.bin select.bin
 OBJS = main.o emulator_function.o instruction.o modrm.o io.o
 
 CC = gcc
