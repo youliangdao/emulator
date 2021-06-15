@@ -7,9 +7,9 @@ int inc(int v){
 
 int main(void)
 {
-  typedef int func_t(int);
-  int (*arr1[2]) (int) = {&inc, NULL};
-  func_t *arr2[2] = {&inc, NULL};
-  return 0;
+  int (*arr[2])(int) = {&inc, NULL};
+
+  typedef int func(int);
+  func *ptr[2] = {&inc, NULL};
 }
 
