@@ -163,12 +163,9 @@ static void inc_rm32(Emulator* emu, ModRM* modrm)
 
 static void inc_r32(Emulator* emu)
 {
+    uint8_t reg = get_code8(emu, 0) - 0x40;
+    set_register32(emu, reg, get_register32(emu, reg) + 1);
     emu->eip += 1;
-    ModRM modrm;
-    parse_modrm(emu, &modrm);
-
-    uint32_t r32 = get_r32(emu, &modrm);
-    set_r32(emu, &modrm, r32 + 1);
 }
 
 static void code_ff(Emulator* emu)
