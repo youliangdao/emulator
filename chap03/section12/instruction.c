@@ -244,7 +244,10 @@ static void in_al_dx(Emulator* emu)
 
 static void out_dx_al(Emulator* emu)
 {
-
+  uint16_t address = get_register32(emu, EDX) & 0xffff;
+  uint8_t value = get_register8(emu, AL);
+  out_io8(address, value);
+  emu->eip += 1;
 }
 
 void init_instructions(void)
