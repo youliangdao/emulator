@@ -1,6 +1,6 @@
 TARGET = px86
 PROGRAM = separation.bin
-OBJS = main.o emnulator_function.o instruction.o
+OBJS = main.o emulator_function.o instruction.o
 
 CC = gcc
 ASM = nasm
