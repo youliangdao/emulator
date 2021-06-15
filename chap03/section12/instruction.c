@@ -161,6 +161,16 @@ static void inc_rm32(Emulator* emu, ModRM* modrm)
     set_rm32(emu, modrm, value + 1);
 }
 
+static void inc_r32(Emulator* emu)
+{
+    emu->eip += 1;
+    ModRM modrm;
+    parse_modrm(emu, &modrm);
+
+    uint32_t r32 = get_r32(emu, &modrm);
+    set_r32(emu, &modrm, r32 + 1);
+}
+
 static void code_ff(Emulator* emu)
 {
     emu->eip += 1;
@@ -285,6 +295,12 @@ void init_instructions(void)
 
     instructions[0x3B] = cmp_r32_rm32;
     instructions[0x3C] = cmp_al_imm8;
+
+    for (int i = 0; i < 8; i++)
+    {
+      instructions[0x40 + i] = inc_r32;
+    }
+
     for (i = 0; i < 8; i++) {
         instructions[0x50 + i] = push_r32;
     }
