@@ -132,7 +132,7 @@ int main(int argc, char const *argv[])
   {
     uint8_t code = get_code8(emu, 0);
 
-    printf("現在のプログラムカウンタと実行される機械語を出力します\nEIP = %08x, Code = %02x\n", emu->eip, code);
+    printf("\n現在のプログラムカウンタと実行される機械語を出力します\nEIP = %08x, Code = %02x\n", emu->eip, code);
 
     if (instructions[code] == NULL)
     {
