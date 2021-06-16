@@ -286,7 +286,7 @@ static void out_dx_al(Emulator* emu)
 
 static void swi(Emulator* emu)
 {
-    uint8_t int_index = get__code8(emu, 1);
+    uint32_t int_index = get_code8(emu, 1);
     emu->eip += 2;
 
     switch (int_index)
