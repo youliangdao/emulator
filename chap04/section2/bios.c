@@ -1,5 +1,7 @@
 #include "bios.h"
 
+#include <stdio.h>
+#include <stdint.h>
 #include "emulator_function.h"
 #include "io.h"
 #include "modrm.h"
