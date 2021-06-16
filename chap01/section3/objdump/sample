@@ -1,0 +1,20 @@
+objdump -d -S -M intel List0106.o
+
+List0106.o:     file format elf32-i386
+
+
+Disassembly of section .text:
+
+00000000 <func>:
+void func(void) {
+   0:	55                   	push   ebp
+   1:	89 e5                	mov    ebp,esp
+   3:	83 ec 10             	sub    esp,0x10
+  int val = 0;
+   6:	c7 45 fc 00 00 00 00 	mov    DWORD PTR [ebp-0x4],0x0
+  val++;
+   d:	ff 45 fc             	inc    DWORD PTR [ebp-0x4]
+}
+  10:	90                   	nop
+  11:	c9                   	leave  
+  12:	c3                   	ret    
