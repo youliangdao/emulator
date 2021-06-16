@@ -13,7 +13,7 @@ static void put_string(const char* s, size_t n)
     size_t i;
     for (i = 0; i < n; i++)
     {
-        out_io8(0x03f8, s[i]);
+        io_out8(0x03f8, s[i]);
     }
 }
 
