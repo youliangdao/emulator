@@ -4,6 +4,6 @@
 #include <stdio.h>
 
 void bios_video(Emulator* emu);
-void bios_video_teletype(Emulator* emu);
-void put_string(const char* s, size_t n);
+static void bios_video_teletype(Emulator* emu);
+static void put_string(const char* s, size_t n);
 #endif
