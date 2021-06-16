@@ -9,7 +9,7 @@
 static void bios_video_teletype(Emulator* emu)
 {
     uint8_t ch = get_register8(emu, AL);
-    printf("%c", ch);
+    printf("%d", ch);
 }
 
 void bios_video(Emulator* emu)
