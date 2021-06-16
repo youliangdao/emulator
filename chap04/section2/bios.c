@@ -8,7 +8,8 @@
 
 static void bios_video_teletype(Emulator* emu)
 {
-    out_io8(0x03f8, 'a');
+    uint8_t ch = get_register8(emu, AL);
+    out_io8(0x03f8, ch);
 }
 
 void bios_video(Emulator* emu)
