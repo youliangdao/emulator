@@ -5,7 +5,7 @@ start:              ; プログラムの開始
   call puts         ; サブルーチンを呼び出す
   jmp 0
 puts:
-  mov al, [si]      ; １文字読み込む
+  mov al, [esi]      ; １文字読み込む
   inc esi
   cmp al, 0
   je puts_end
