@@ -43,13 +43,48 @@ static void mov_rm32_r32(Emulator* emu){
   set_rm32(emu, &modrm, r32);
 }
 
-//REGで指定される32ビットのレジスタの値にModR/MのModとRMで指定される32bitのレジスタorメモリの値を格納
+//REGで指定される32ビットのレジスタの値にModR/MのModとRMで指定される32bitのレジスタの値を格納
 static void mov_r32_rm32(Emulator* emu){
   emu->eip += 1;
   ModRM modrm;
   parse_modrm(emu, &modrm);
   uint32_t rm32 = get_rm32(emu, &modrm);
   set_r32(emu, &modrm, rm32);
+}
+
+//ModR/MのModとRMで指定される32bitのレジスタorメモリにREGで指定された32bitのレジスタの値を加算する
+static void add_rm32_r32(Emulator* emu){
+  emu->eip += 1;
+  ModRM modrm;
+  parse_modrm(emu, &modrm);
+  uint32_t r32 = get_r32(emu, &modrm);
+  uint32_t rm32 = get_rm32(emu, &modrm);
+  set_rm32(emu, &modrm, r32 + rm32);
+}
+
+//ModR/MのModとRMで指定される32bitのレジスタorメモリに8bitの即値を減算する
+static void sub_rm32_imm8(Emulator* emu, ModRM* modrm){
+  uint32_t rm32 = get_rm32(emu, modrm);
+  uint32_t imm8 = (int32_t)get_sign_code8(emu, 0);
+  emu->eip += 1;
+  set_rm32(emu, modrm, rm32 - imm8);
+}
+
+static void code_83(Emulator* emu){
+  emu->eip += 1;
+  ModRM modrm;
+  parse_modrm(emu, &modrm);
+
+  switch (modrm.opecode)
+  {
+  case 5:
+    sub_rm32_imm8(emu, &modrm);
+    break;
+
+  default:
+    printf("not implemtend: 83 / %d\n");
+    exit(1);
+  }
 }
 
 //関数ポインタ型の配列instructionsの作成と初期化
@@ -64,3 +99,5 @@ void init_instrutions(void){
   instructions[0xEB] = short_jump;
   instructions[0xe9] = near_jump;
 }
+
+
