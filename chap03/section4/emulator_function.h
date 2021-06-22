@@ -27,4 +27,10 @@ void set_memory32(Emulator* emu, uint32_t address, uint32_t value);
 //index番目の32bit汎用レジスタの値を取得する
 uint32_t get_register32(Emulator* emu, int index);
 
+//メモリのindex番地の8bitを取得する
+uint8_t get_memory8(Emulator* emu, uint32_t address);
+
+//メモリのindex番地の32bitを取得する
+uint32_t get_memory32(Emulator* emu, uint32_t address);
+
 #endif

@@ -48,3 +48,18 @@ void set_memory32(Emulator* emu, uint32_t address, uint32_t value){
 uint32_t get_register32(Emulator* emu, int index){
   return emu->registers[index];
 }
+
+//メモリのindex番地の8bitの値を取得する
+uint8_t get_memory8(Emulator* emu, uint32_t address){
+  return emu->memory[address];
+}
+
+//メモリのindex番地の32bitの値を取得する
+uint32_t get_memory32(Emulator* emu, uint32_t address){
+  uint32_t ret;
+  for (int i = 0; i < 4; i++)
+  {
+    ret |= get_memory8(emu, address + i) << (8 * i);
+  }
+  return ret;
+}

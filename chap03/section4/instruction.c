@@ -24,6 +24,34 @@ void near_jump(Emulator* emu){
   emu->eip += (diff + 5);
 }
 
+//ModR/MのModとRMで指定される32bitのレジスタorメモリに32bitの即値を格納
+static void mov_rm32_imm32(Emulator* emu){
+  emu->eip += 1;
+  ModRM modrm;
+  parse_modrm(emu, &modrm);
+  uint32_t value = get_code32(emu, 0);
+  emu->eip += 4;
+  set_rm32(emu, &modrm, value);
+}
+
+//ModR/MのModとRMで指定される32bitのレジスタorメモリにREGで指定される32ビットのレジスタの値を格納
+static void mov_rm32_r32(Emulator* emu){
+  emu->eip += 1;
+  ModRM modrm;
+  parse_modrm(emu, &modrm);
+  uint32_t r32 = get_r32(emu, &modrm);
+  set_rm32(emu, &modrm, r32);
+}
+
+//REGで指定される32ビットのレジスタの値にModR/MのModとRMで指定される32bitのレジスタorメモリの値を格納
+static void mov_r32_rm32(Emulator* emu){
+  emu->eip += 1;
+  ModRM modrm;
+  parse_modrm(emu, &modrm);
+  uint32_t rm32 = get_rm32(emu, &modrm);
+  set_r32(emu, &modrm, rm32);
+}
+
 //関数ポインタ型の配列instructionsの作成と初期化
 //typedefを用いることにより関数ポインタ配列をわかりやすく記述している
 void init_instrutions(void){
@@ -36,14 +64,3 @@ void init_instrutions(void){
   instructions[0xEB] = short_jump;
   instructions[0xe9] = near_jump;
 }
-
-//parse_modrmを利用したmov命令の実装
-static void mov_rm32_imm32(Emulator* emu){
-  emu->eip += 1;
-  ModRM modrm;
-  parse_modrm(emu, &modrm);
-  uint32_t value = get_code32(emu, 0);
-  emu->eip += 4;
-  set_rm32(emu, &modrm, value);
-}
-

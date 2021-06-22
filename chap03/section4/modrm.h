@@ -52,3 +52,12 @@ void set_rm32(Emulator* emu, ModRM* modrm, uint32_t value);
 */
 uint32_t calc_memory_address(Emulator* emu, ModRM* modrm);
 
+/* rm32のレジスタまたはメモリの32bit値を取得する */
+uint32_t get_rm32(Emulator* emu, ModRM* modrm);
+
+/* r32のレジスタの32bit値を取得する */
+uint32_t get_r32(Emulator* emu, ModRM* modrm);
+
+/* r32のレジスタの32bit値を設定する */
+void set_r32(Emulator* emu, ModRM* modrm, uint32_t value);
+

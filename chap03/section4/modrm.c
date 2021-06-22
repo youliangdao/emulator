@@ -94,6 +94,24 @@ uint32_t calc_memory_address(Emulator* emu, ModRM* modrm){
     printf("not implemented ModRM mod = 3\n");
     exit(0);
   }
+}
 
+uint32_t get_rm32(Emulator* emu, ModRM* modrm) {
+  if (modrm->rm == 3)
+  {
+    return get_register32(emu, modrm->rm);
+  }
+  else
+  {
+    uint32_t address = calc_memory_address(emu, modrm);
+    return get_memory32(emu, address);
+  }
+}
 
+void set_r32(Emulator* emu, ModRM* modrm, uint32_t value){
+  set_register32(emu, modrm->reg_index, value);
+}
+
+void get_r32(Emulator* emu, ModRM* modrm){
+  return get_register32(emu, modrm->reg_index);
 }
