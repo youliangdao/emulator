@@ -136,6 +136,14 @@ static void ret(Emulator* emu){
   emu->eip = pop32(emu);
 }
 
+//leave命令の実行
+static void leave(Emulator* emu){
+  uint32_t ebp = get_register32(emu, EBP);
+  set_register32(emu, ESP, ebp);
+  set_register32(emu, EBP, pop32(emu));
+  emu->eip += 1;
+}
+
 //関数ポインタ型の配列instructionsの作成と初期化
 //typedefを用いることにより関数ポインタ配列をわかりやすく記述している
 void init_instrutions(void){
