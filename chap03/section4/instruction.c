@@ -2,6 +2,7 @@
 #include "emulator.h"
 #include "instruction.h"
 #include "emulator_function.h"
+#include "modrm.h"
 
 //汎用レジスタに32ビットのリテラルをコピーするmov命令のエミュレート
 void mov_r32_imm32(Emulator* emu){
@@ -35,3 +36,14 @@ void init_instrutions(void){
   instructions[0xEB] = short_jump;
   instructions[0xe9] = near_jump;
 }
+
+//parse_modrmを利用したmov命令の実装
+static void mov_rm32_imm32(Emulator* emu){
+  emu->eip += 1;
+  ModRM modrm;
+  parse_modrm(emu, &modrm);
+  uint32_t value = get_code32(emu, 0);
+  emu->eip += 4;
+  set_rm32(emu, &modrm, value);
+}
+
