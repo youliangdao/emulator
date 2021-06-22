@@ -87,17 +87,46 @@ static void code_83(Emulator* emu){
   }
 }
 
+//ModR/MのModとRMで指定される32bitのレジスタorメモリの値をインクリメントする
+static void inc_rm32(Emulator* emu, ModRM* modrm){
+  uint32_t value = get_rm32(emu, modrm);
+  set_rm32(emu, modrm, value++);
+}
+
+static void code_ff(Emulator* emu){
+  emu->eip += 1;
+  ModRM modrm;
+  parse_modrm(emu, &modrm);
+
+  switch (modrm.opecode)
+  {
+  case 0:
+    inc_rm32(emu, &modrm);
+    break;
+
+  default:
+    printf("not implemented: FF / %d\n", modrm.opecode);
+    exit(1);
+  }
+}
+
 //関数ポインタ型の配列instructionsの作成と初期化
 //typedefを用いることにより関数ポインタ配列をわかりやすく記述している
 void init_instrutions(void){
   int i;
   memset(instructions, 0, sizeof(instructions));
+  instructions[0x01] = add_rm32_r32;
+  instructions[0x83] = code_83;
+  instructions[0x89] = mov_rm32_r32;
+  instructions[0x8B] = mov_r32_rm32;
   for (int i = 0; i < 8; i++)
   {
     instructions[0xB8 + i] = mov_r32_imm32;
   }
+  instructions[0xC7] = mov_rm32_imm32;
   instructions[0xEB] = short_jump;
   instructions[0xe9] = near_jump;
+  instructions[0xFF] = code_ff;
 }
 
 
