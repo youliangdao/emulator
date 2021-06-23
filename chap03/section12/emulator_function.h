@@ -21,6 +21,12 @@ uint32_t get_code32(Emulator* emu, int index);
 //memory配列の指定した位置から32ビットの値を取得する
 int32_t get_sign_code32(Emulator* emu, int index);
 
+/* index番目の8bit汎用レジスタの値を取得する */
+uint8_t get_register8(Emulator* emu, int index);
+
+/* index番目の8bit汎用レジスタに値を設定する */
+void set_register8(Emulator* emu, int index, uint8_t value);
+
 //index番目の32bit汎用レジスタに値を設定する
 void set_register32(Emulator* emu, int index, uint32_t value);
 

@@ -3,6 +3,7 @@
 #include "instruction.h"
 #include "emulator_function.h"
 #include "modrm.h"
+#include "io.h"
 
 //汎用レジスタに32ビットのリテラルをコピーするmov命令のエミュレート
 void mov_r32_imm32(Emulator* emu){
@@ -220,6 +221,20 @@ static void jle(Emulator* emu){
   emu->eip += (diff + 2);
 }
 
+static void in_al_dx(Emulator* emu){
+  uint16_t address = get_register32(emu, EDX) & 0xffff;
+  uint8_t value = io_in8(address);
+  set_register8(emu, AL, value);
+  emu->eip += 1;
+}
+
+static void out_dx_al(Emulator* emu){
+  uint16_t address = get_register32(emu, EDX) & 0xffff;
+  uint8_t value = get_register8(emu, AL);
+  io_out8(address, value);
+  emu->eip += 1;
+}
+
 //関数ポインタ型の配列instructionsの作成と初期化
 //typedefを用いることにより関数ポインタ配列をわかりやすく記述している
 void init_instrutions(void){
@@ -267,6 +282,8 @@ void init_instrutions(void){
   instructions[0xE8] = call_rel32;
   instructions[0xE9] = near_jump;
   instructions[0xEB] = short_jump;
+  instructions[0xEC] = in_al_dx;
+  instructions[0xEE] = out_dx_al;
   instructions[0xFF] = code_ff;
 }
 

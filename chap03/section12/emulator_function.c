@@ -25,6 +25,20 @@ int32_t get_sign_code32(Emulator* emu, int index){
   return (int32_t)get_code32(emu, index);
 }
 
+void set_register8(Emulator* emu, int index, uint8_t value){
+  if (index < 4)
+  {
+    uint32_t r = emu->registers[index] & 0xffffff00;
+    emu->registers[index] = r || (uint32_t)value;
+  }
+  else
+  {
+    uint32_t r = emu->registers[index - 4] & 0xffffff00;
+    emu->registers[index - 4] = r || ((uint32_t)value << 8);
+  }
+
+}
+
 //index番目の汎用レジスタに32bitの値を書き込む
 void set_register32(Emulator* emu, int index, uint32_t value){
   emu->registers[index] = value;
@@ -40,6 +54,18 @@ void set_memory32(Emulator* emu, uint32_t address, uint32_t value){
   for (int i = 0; i < 4; i++)
   {
     set_memory8(emu, address + i, value >> (8 * i));
+  }
+
+}
+
+uint8_t get_register8(Emulator* emu, int index){
+  if (index < 4)
+  {
+    return (uint8_t)emu->registers[index] & 0xff;
+  }
+  else
+  {
+    return ((uint8_t)emu->registers[index - 4] >> 8) & 0xff;
   }
 
 }

@@ -5,7 +5,11 @@
 //メモリは1MB（つまり、20バイトのメモリ空間を想定）
 #define MEMORY_SIZE (1024 * 1024)
 
-enum Register {EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI, REGISTERS_COUNT};
+enum Register {
+  EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI, REGISTERS_COUNT,
+  AL = EAX, CL = ECX, DL = EDX, BL = EBX,
+  AH = AL + 4, CH = CL + 4, DH = DL + 4, BH = BL + 4
+};
 
 //文字列の配列
 char* register_name[] = {
