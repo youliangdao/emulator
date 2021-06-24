@@ -187,7 +187,7 @@ int main(int argc, char const *argv[])
     }
   }
 
-  dump_requires(emu);
+  dump_registers(emu);
   destroy_emu(emu);
   return 0;
 }
