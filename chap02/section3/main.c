@@ -63,7 +63,7 @@ int32_t get_sign_code8(Emulator* emu, int index){
 
 //memory配列の指定した位置から32ビットの値を取得する
 uint32_t get_code32(Emulator* emu, int index){
-  uint32_t ret;
+  uint32_t ret = 0;
   for (int i = 0; i < 4; i++)
   {
     ret |= get_code8(emu, index + i) << (i * 8);
