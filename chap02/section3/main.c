@@ -92,7 +92,6 @@ typedef void instruction_func_t(Emulator*);
   //関数ポインタ型の配列instructionsの作成と初期化
 instruction_func_t* instructions[256];
 void init_instrutions(void){
-  int i;
   memset(instructions, 0, sizeof(instructions));
   for (int i = 0; i < 8; i++)
   {
@@ -114,7 +113,7 @@ void dump_registers(Emulator* emu){
 //メイン処理
 int main(int argc, char const *argv[])
 {
-  FILE* fp;
+  FILE* binary;
   Emulator* emu;
 
   if (argc != 2)
@@ -127,15 +126,16 @@ int main(int argc, char const *argv[])
   emu = create_emu(MEMORY_SIZE, 0x0000, 0x7c00);
 
   //読み取り専用でオープン
-  if (fp = fopen(argv[1], "rb") == NULL)
+  binary = fopen(argv[1], "rb");
+  if (binary == NULL)
   {
     printf("%sファイルが開けません\n", argv[1]);
     exit(1);
   }
 
   //機械語ファイルを読み込む(最大512バイト)
-  fread(emu->memory, 1, 0x200, fp);
-  fclose(fp);
+  fread(emu->memory, 1, 0x200, binary);
+  fclose(binary);
 
   //関数ポインタテーブルの作成
   init_instrutions();
