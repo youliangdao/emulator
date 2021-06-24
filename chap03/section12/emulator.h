@@ -2,8 +2,6 @@
 #define __EMULATOR_H__
 #include <stdint.h>
 
-//メモリは1MB（つまり、20バイトのメモリ空間を想定）
-#define MEMORY_SIZE (1024 * 1024)
 
 enum Register {
   EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI, REGISTERS_COUNT,

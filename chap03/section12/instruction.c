@@ -5,6 +5,20 @@
 #include "modrm.h"
 #include "io.h"
 
+static void mov_r8_imm8(Emulator* emu){
+  uint8_t reg = get_code8(emu, 0) - 0xB0;
+  set_register8(emu, reg, get_code8(emu, 1));
+  emu->eip += 2;
+}
+
+void mov_r8_rm8(Emulator* emu){
+  emu->eip += 1;
+  ModRM modrm;
+  parse_modrm(emu, &modrm);
+  uint32_t rm8 = get_rm8(emu, &modrm);
+  set_r8(emu, &modrm, rm8);
+}
+
 //汎用レジスタに32ビットのリテラルをコピーするmov命令のエミュレート
 void mov_r32_imm32(Emulator* emu){
   uint8_t reg = get_code8(emu, 0) - 0xB8;
@@ -13,16 +27,22 @@ void mov_r32_imm32(Emulator* emu){
   emu->eip += 5;
 }
 
-//1バイトのメモリ番地を取るjmp命令のエミュレート
-void short_jump(Emulator* emu){
-  int8_t diff =  get_sign_code8(emu, 1);
-  emu->eip += (diff + 2);
+//REGで指定される32ビットのレジスタの値にModR/MのModとRMで指定される32bitのレジスタの値を格納
+static void mov_r32_rm32(Emulator* emu){
+  emu->eip += 1;
+  ModRM modrm;
+  parse_modrm(emu, &modrm);
+  uint32_t rm32 = get_rm32(emu, &modrm);
+  set_r32(emu, &modrm, rm32);
 }
 
-//１バイトのメモリ番地を取るjmp命令のエミュレート（より広い範囲に対応できるように）
-void near_jump(Emulator* emu){
-  int32_t diff = get_code32(emu, 1);
-  emu->eip += (diff + 5);
+
+static void mov_rm8_r8(Emulator* emu){
+  emu->eip += 1;
+  ModRM modrm;
+  parse_modrm(&modrm);
+  uint32_t r8 = get_r8(emu, &modrm);
+  set_rm8(emu, &modrm, r8);
 }
 
 //ModR/MのModとRMで指定される32bitのレジスタorメモリに32bitの即値を格納
@@ -44,23 +64,11 @@ static void mov_rm32_r32(Emulator* emu){
   set_rm32(emu, &modrm, r32);
 }
 
-//REGで指定される32ビットのレジスタの値にModR/MのModとRMで指定される32bitのレジスタの値を格納
-static void mov_r32_rm32(Emulator* emu){
-  emu->eip += 1;
-  ModRM modrm;
-  parse_modrm(emu, &modrm);
-  uint32_t rm32 = get_rm32(emu, &modrm);
-  set_r32(emu, &modrm, rm32);
-}
 
-//ModR/MのModとRMで指定される32bitのレジスタorメモリにREGで指定された32bitのレジスタの値を加算する
-static void add_rm32_r32(Emulator* emu){
-  emu->eip += 1;
-  ModRM modrm;
-  parse_modrm(emu, &modrm);
-  uint32_t r32 = get_r32(emu, &modrm);
-  uint32_t rm32 = get_rm32(emu, &modrm);
-  set_rm32(emu, &modrm, r32 + rm32);
+static void inc_r32(Emulator* emu){
+    uint8_t reg = get_code8(emu, 0) - 0x40;
+    set_register32(emu, reg, get_register32(emu, reg) + 1);
+    emu->eip += 1;
 }
 
 //ModR/MのModとRMで指定される32bitのレジスタorメモリの値をインクリメントする
@@ -93,33 +101,6 @@ static void push_r32(Emulator* emu){
   emu->eip += 1;
 }
 
-//pop操作
-static void pop_r32(Emulator* emu){
-  uint8_t reg = get_code8(emu, 0) - 0x58;
-  set_register32(emu, reg, pop32(emu));
-  emu->eip += 1;
-}
-
-//call命令
-static void call_rel32(Emulator* emu){
-  int32_t diff = get_sign_code32(emu, 1);
-  push32(emu, emu->eip + 5);
-  emu->eip += (diff + 5);
-}
-
-//ret命令
-static void ret(Emulator* emu){
-  emu->eip = pop32(emu);
-}
-
-//leave命令の実行
-static void leave(Emulator* emu){
-  uint32_t ebp = get_register32(emu, EBP);
-  set_register32(emu, ESP, ebp);
-  set_register32(emu, EBP, pop32(emu));
-  emu->eip += 1;
-}
-
 //push imm8の実装
 static void push_imm32(Emulator* emu){
   uint32_t value = get_code32(emu, 1);
@@ -133,11 +114,49 @@ static void push_imm8(Emulator* emu){
   emu->eip += 2;
 }
 
+//pop操作
+static void pop_r32(Emulator* emu){
+  uint8_t reg = get_code8(emu, 0) - 0x58;
+  set_register32(emu, reg, pop32(emu));
+  emu->eip += 1;
+}
+
+
+//ModR/MのModとRMで指定される32bitのレジスタorメモリにREGで指定された32bitのレジスタの値を加算する
+static void add_rm32_r32(Emulator* emu){
+  emu->eip += 1;
+  ModRM modrm;
+  parse_modrm(emu, &modrm);
+  uint32_t r32 = get_r32(emu, &modrm);
+  uint32_t rm32 = get_rm32(emu, &modrm);
+  set_rm32(emu, &modrm, r32 + rm32);
+}
+
+
 static void add_rm32_imm8(Emulator* emu, ModRM* modrm){
   uint32_t rm32 = get_rm32(emu, modrm);
   uint32_t imm8 = (int32_t)get_sign_code8(emu, 0);
   emu->eip += 1;
   set_rm32(emu, modrm, rm32 + imm8);
+}
+
+//ModR/MのModとRMで指定される32bitのレジスタorメモリに8bitの即値を減算する
+static void sub_rm32_imm8(Emulator* emu, ModRM* modrm){
+  uint32_t rm32 = get_rm32(emu, modrm);
+  uint32_t imm8 = (int32_t)get_sign_code8(emu, 0);
+  emu->eip += 1;
+  uint64_t result = (uint64_t)rm32 - (uint64_t)imm8;
+  set_rm32(emu, modrm, result);
+  update_eflags_sub(emu, rm32, imm8, result);
+}
+
+
+static void cmp_rm32_imm8(Emulator* emu, ModRM* modrm){
+  uint32_t rm32 = get_rm32(emu, modrm);
+  uint32_t imm8 = (uint32_t)get_sign_code8(emu, 0);
+  emu->eip += 1;
+  uint64_t result = (uint64_t)rm32 - (uint64_t)imm8;
+  update_eflags_sub(emu, rm32, imm8, result);
 }
 
 
@@ -151,22 +170,22 @@ static void cmp_r32_rm32(Emulator* emu){
   update_eflags_sub(emu, r32, rm32, result);
 }
 
-static void cmp_rm32_imm8(Emulator* emu, ModRM* modrm){
-  uint32_t rm32 = get_rm32(emu, modrm);
-  uint32_t imm8 = (uint32_t)get_sign_code8(emu, 0);
-  emu->eip += 1;
-  uint64_t result = (uint64_t)rm32 - (uint64_t)imm8;
-  update_eflags_sub(emu, rm32, imm8, result);
+static void cmp_al_imm8(Emulator* emu){
+  uint8_t value = get_code8(emu, 1);
+  uint8_t al = get_register8(emu, AL);
+  uint64_t result = (uint64_t)al - (uint64_t)value;
+  update_eflags_sub(emu, al, value, result);
+  emu->eip += 2;
 }
 
-//ModR/MのModとRMで指定される32bitのレジスタorメモリに8bitの即値を減算する
-static void sub_rm32_imm8(Emulator* emu, ModRM* modrm){
-  uint32_t rm32 = get_rm32(emu, modrm);
-  uint32_t imm8 = (int32_t)get_sign_code8(emu, 0);
-  emu->eip += 1;
-  uint64_t result = (uint64_t)rm32 - (uint64_t)imm8;
-  set_rm32(emu, modrm, result);
-  update_eflags_sub(emu, rm32, imm8, result);
+static void cmp_eax_imm32(Emulator* emu){
+    emu->eip += 1;
+    ModRM modrm;
+    parse_modrm(emu, &modrm);
+    uint32_t r32 = get_r32(emu, &modrm);
+    uint32_t rm32 = get_rm32(emu, &modrm);
+    uint64_t result = (uint64_t)r32 - (uint64_t)rm32;
+    update_eflags_sub(emu, r32, rm32, result);
 }
 
 static void code_83(Emulator* emu){
@@ -191,6 +210,39 @@ static void code_83(Emulator* emu){
     exit(1);
   }
 }
+
+//call命令
+static void call_rel32(Emulator* emu){
+  int32_t diff = get_sign_code32(emu, 1);
+  push32(emu, emu->eip + 5);
+  emu->eip += (diff + 5);
+}
+
+//ret命令
+static void ret(Emulator* emu){
+  emu->eip = pop32(emu);
+}
+
+//leave命令の実行
+static void leave(Emulator* emu){
+  uint32_t ebp = get_register32(emu, EBP);
+  set_register32(emu, ESP, ebp);
+  set_register32(emu, EBP, pop32(emu));
+  emu->eip += 1;
+}
+
+//1バイトのメモリ番地を取るjmp命令のエミュレート
+void short_jump(Emulator* emu){
+  int8_t diff =  get_sign_code8(emu, 1);
+  emu->eip += (diff + 2);
+}
+
+//１バイトのメモリ番地を取るjmp命令のエミュレート（より広い範囲に対応できるように）
+void near_jump(Emulator* emu){
+  int32_t diff = get_code32(emu, 1);
+  emu->eip += (diff + 5);
+}
+
 
 #define DEFINE_JX(flag, is_flag) \
 static void j ## flag(Emulator* emu) \
@@ -221,6 +273,7 @@ static void jle(Emulator* emu){
   emu->eip += (diff + 2);
 }
 
+
 static void in_al_dx(Emulator* emu){
   uint16_t address = get_register32(emu, EDX) & 0xffff;
   uint8_t value = io_in8(address);
@@ -242,6 +295,14 @@ void init_instrutions(void){
   memset(instructions, 0, sizeof(instructions));
   instructions[0x01] = add_rm32_r32;
   instructions[0x3B] = cmp_r32_rm32;
+  instructions[0x3C] = cmp_al_imm8;
+  instructions[0x3D] = cmp_eax_imm32;
+
+  for (int i = 0; i < 8; i++)
+  {
+    instructions[0x40 + i] = inc_r32;
+  }
+
 
   for (i = 0; i < 8; i++)
   {
@@ -268,8 +329,17 @@ void init_instrutions(void){
   instructions[0x7E] = jle;
 
   instructions[0x83] = code_83;
+  instructions[0x88] = mov_rm8_r8;
   instructions[0x89] = mov_rm32_r32;
+  instructions[0x8A] = mov_r8_rm8;
   instructions[0x8B] = mov_r32_rm32;
+
+  for (int i = 0; i < 8; i++)
+  {
+    instructions[0xB0 + i] = mov_r8_imm8;
+  }
+
+
   for (int i = 0; i < 8; i++)
   {
     instructions[0xB8 + i] = mov_r32_imm32;

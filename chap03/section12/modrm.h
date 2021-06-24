@@ -46,6 +46,8 @@ void parse_modrm(Emulator* emu, ModRM* modrm);
 */
 void set_rm32(Emulator* emu, ModRM* modrm, uint32_t value);
 
+void set_rm8(Emulator* emu, ModRM* modrm, uint8_t value);
+
 /*・ModR/M・の内容に基づきメモリの実行アドレスを計算する
 ・＊
 ・＊・modrm->mod・は0,1,2もいずれかでなければならない
@@ -54,6 +56,9 @@ uint32_t calc_memory_address(Emulator* emu, ModRM* modrm);
 
 /* rm32のレジスタまたはメモリの32bit値を取得する */
 uint32_t get_rm32(Emulator* emu, ModRM* modrm);
+
+/* r8のレジスタの8bit値を取得する */
+uint8_t get_r8(Emulator* emu, ModRM* modrm);
 
 /* r32のレジスタの32bit値を取得する */
 uint32_t get_r32(Emulator* emu, ModRM* modrm);
