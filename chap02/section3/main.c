@@ -57,7 +57,6 @@ void destroy_emu(Emulator* emu)
 
 /* 汎用レジスタとプログラムカウンタの値を標準出力に出力する */
 void dump_registers(Emulator* emu){
-  int i;
   for (int i = 0; i < REGISTERS_COUNT; i++)
   {
     printf("%s = %08x\n", registers_name[i], emu->registers[i]);
@@ -80,7 +79,6 @@ int32_t get_sign_code8(Emulator* emu, int index){
 //メモリ配列の指定した番地から32ビットのデータを取得する関数。
 //ただし戻り値は32ビットとして表示→これはレジスタサイズが32ビットであるため
 uint32_t get_code32(Emulator* emu, int index) {
-  int i;
   uint32_t ret = 0;
 
   //リトルエンディアンでメモリの値を取得する
@@ -115,7 +113,6 @@ instruction_func_t* instructions[256];
 //関数ポインタテーブルの（オペコードの値）番目の要素に、そのオペコード自身を代入していく
 void init_instructions(void){
   //関数ポインタテーブルの初期化
-  int i;
   memset(instructions, 0,sizeof(instructions));
 
   //汎用レジスタが8個しかないから、ここは8
