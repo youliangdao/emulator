@@ -9,7 +9,7 @@ CFLAGS += -O2 -Wall -Wextra
 all : $(TARGET)
 
 run : $(TARGET) $(PROGRAM)
-	./$(TARGET) %(PROGRAM)
+	./$(TARGET) $(PROGRAM)
 
 $(TARGET) : $(OBJS)
 	$(CC) -o $@ $(OBJS)
