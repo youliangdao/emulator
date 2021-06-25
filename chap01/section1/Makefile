@@ -2,7 +2,7 @@ TARGET = sample1.bin
 
 CC = gcc
 LD = ld
-CFLAGS += -O0 -march=i386 -m32 -nostdlib -fno-asynchronous-unwind-tables -g -fno-stack-protecter -fno-pie
+CFLAGS += -O0 -march=i386 -m32 -nostdlib -fno-asynchronous-unwind-tables -g -fno-stack-protector -fno-pie
 LDFLAGS += -m elf_i386 --entry=func --oformat=binary
 
 .PHONY: all
