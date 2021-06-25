@@ -59,7 +59,7 @@ uint32_t get_code8(Emulator* emu, int index)
 typedef void instruction_func_t(Emulator*);
 instruction_func_t* instructions[256];
 
-void init_instructions(Emulator* emu)
+void init_instructions(void)
 {
   memset(instructions, 0, sizeof(instructions));
 }
