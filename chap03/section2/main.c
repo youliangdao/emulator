@@ -87,9 +87,20 @@ int main(int argc, char const *argv[])
   fread(emu->memory, 1, 0x200, binary);
   fclose(binary);
 
+  init_instructions();
+
   while (emu->eip < MEMORY_SIZE)
   {
-    uint32_t code = get_code8(emu, 0);
+    uint8_t code = get_code8(emu, 0);
+
+    printf("現在のプログラムカウンタと実行される機械語を出力します\nEIP = %08x, Code = %02x\n", emu->eip, code);
+
+    if (instructions[code] == NULL)
+    {
+      printf("命令が実装されていません：%x\n", code);
+      break;
+    }
+
     instructions[code](emu);
 
     if (emu->eip == 0x00)
