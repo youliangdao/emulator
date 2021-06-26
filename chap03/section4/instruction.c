@@ -7,6 +7,8 @@
 #include "instruction.h"
 #include "emulator_function.h"
 
+instruction_func_t* instructions[256];
+
 void mov_r32_imm32(Emulator* emu)
 {
   uint8_t reg = get_code8(emu, 0) - 0xB8;
@@ -27,6 +29,7 @@ void short_jump(Emulator* emu)
   int8_t diff = get_sign_code8(emu, 1);
   emu->eip += (diff + 2);
 }
+
 
 void init_instructions(void)
 {

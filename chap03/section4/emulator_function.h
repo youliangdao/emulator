@@ -2,6 +2,7 @@
 #define __EMULATOR_FUNCTION_H__
 
 #include <stdint.h>
+
 #include "emulator.h"
 
 uint32_t get_code8(Emulator* emu, int index);
