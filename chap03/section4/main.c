@@ -34,9 +34,9 @@ void dump_registers(Emulator* emu)
 {
   for (int i = 0; i < REGISTER_COUNT; i++)
   {
-    printf("%s = %08x", registers_name[i], emu->registers[i]);
+    printf("%s = %08x\n", registers_name[i], emu->registers[i]);
   }
-  printf("EIP = %08x", emu->eip);
+  printf("EIP = %08x\n", emu->eip);
 }
 
 static void read_binary(Emulator* emu, const char* filename)
