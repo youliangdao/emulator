@@ -3,11 +3,11 @@
 
 #include "emulator.h"
 
-//関数ポインタテーブルの初期化関数の宣言
 void init_instructions(void);
 
-//関数ポインタテーブルの定義
+//1バイト機械語に対応する関数のポインタを格納した関数ポインタテーブルを作成
 typedef void instruction_func_t(Emulator*);
+
 extern instruction_func_t* instructions[256];
 
 #endif
