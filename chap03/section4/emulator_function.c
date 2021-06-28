@@ -69,7 +69,7 @@ uint32_t get_memory32(Emulator* emu, uint32_t address){
   uint32_t ret = 0;
   for (int i = 0; i < 4; i++)
   {
-    ret | get_memory8(emu, address + i) << (8 * i);
+    ret |= get_memory8(emu, address + i) << (8 * i);
   }
 
   return ret;
