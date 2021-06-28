@@ -25,6 +25,8 @@ void sub_rm32_imm8(Emulator* emu, ModRM* modrm)
 {
   uint32_t imm8 = (int32_t)get_sign_code8(emu, 0);
   uint32_t rm32 = get_rm32(emu, modrm);
+  emu->eip += 1;
+
   set_rm32(emu, modrm, rm32 - imm8);
 }
 
