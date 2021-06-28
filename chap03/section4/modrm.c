@@ -62,6 +62,19 @@ void set_rm32(Emulator* emu, ModRM* modrm, uint32_t value)
   }
 }
 
+/* ModRMで指定したレジスタもしくはメモリアドレスから32bitの値を取得する */
+uint32_t get_rm32(Emulator* emu, ModRM* modrm)
+{
+  if (modrm->mod == 0x03)
+  {
+    get_register32(emu, modrm->rm);
+  } else
+  {
+    uint32_t address = calc_memory_address(emu, modrm);
+    get_memory32(emu, address);
+  }
+}
+
 /* ModRMとディスプレースメントの値からメモリアドレスを計算する */
 uint32_t calc_memory_address(Emulator* emu, ModRM* modrm)
 {
