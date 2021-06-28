@@ -118,6 +118,7 @@ void code_ff(Emulator* emu)
 
   default:
     printf("オペコードFFの命令は実装されていません\n");
+    printf("%x", modrm.opecode);
     exit(1);
   }
 }
