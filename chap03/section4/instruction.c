@@ -30,7 +30,6 @@ void sub_rm32_imm8(Emulator* emu, ModRM* modrm)
   set_rm32(emu, modrm, rm32 - imm8);
 }
 
-
 void code_83(Emulator* emu)
 {
   emu->eip += 1;
@@ -100,6 +99,29 @@ void short_jump(Emulator* emu)
   emu->eip += (diff + 2);
 }
 
+void inc_rm32(Emulator* emu, ModRM* modrm)
+{
+  uint32_t rm32 = get_rm32(emu, modrm);
+  set_rm32(emu, modrm, rm32++);
+}
+
+void code_ff(Emulator* emu)
+{
+  ModRM modrm;
+  parse_modrm(emu, &modrm);
+
+  switch (modrm.opecode)
+  {
+  case 0:
+    inc_rm32(emu, &modrm);
+    break;
+
+  default:
+    printf("オペコードFFの命令は実装されていません\n");
+    exit(1);
+  }
+}
+
 
 void init_instructions(void)
 {
@@ -116,4 +138,5 @@ void init_instructions(void)
   instructions[0xC7] = mov_rm32_imm32;
   instructions[0xE9] = near_jump;
   instructions[0xEB] = short_jump;
+  instructions[0xFF] = code_ff;
 }
