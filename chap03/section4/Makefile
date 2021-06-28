@@ -1,5 +1,5 @@
 TARGET = px86
-PROGRAM = separation.bin
+PROGRAM = modrm-test.bin
 OBJS = main.o emulator_function.o instruction.o
 
 CC = gcc

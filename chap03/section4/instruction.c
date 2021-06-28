@@ -62,7 +62,7 @@ void init_instructions(void)
   {
     instructions[0xB8 + i] = mov_r32_imm32;
   }
-
+  instructions[0xC7] = mov_rm32_imm32;
   instructions[0xE9] = near_jump;
   instructions[0xEB] = short_jump;
 }
