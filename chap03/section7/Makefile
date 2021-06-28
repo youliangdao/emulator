@@ -1,5 +1,5 @@
 TARGET = px86
-PROGRAM = crt0.bin
+PROGRAM = call-test.bin
 OBJS = main.o emulator_function.o instruction.o modrm.o
 
 CC = gcc

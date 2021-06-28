@@ -98,6 +98,11 @@ void mov_r32_rm32(Emulator* emu)
   set_register32(emu, modrm.reg_index, get_rm32(emu, &modrm));
 }
 
+void ret(Emulator* emu)
+{
+  emu->eip = pop32(emu);
+}
+
 void mov_rm32_imm32(Emulator* emu)
 {
   emu->eip += 1;
@@ -116,6 +121,13 @@ void mov_r32_imm32(Emulator* emu)
 
   emu->registers[reg] = value;
   emu->eip += 5;
+}
+
+void call_rel32(Emulator* emu)
+{
+  int32_t diff = get_sign_code32(emu, 1);
+  push32(emu, emu->eip + 5);
+  emu->eip += (diff + 5);
 }
 
 void near_jump(Emulator* emu)
@@ -178,7 +190,9 @@ void init_instructions(void)
   {
     instructions[0xB8 + i] = mov_r32_imm32;
   }
+  instructions[0xC3] = ret;
   instructions[0xC7] = mov_rm32_imm32;
+  instructions[0xE8] = call_rel32;
   instructions[0xE9] = near_jump;
   instructions[0xEB] = short_jump;
   instructions[0xFF] = code_ff;
