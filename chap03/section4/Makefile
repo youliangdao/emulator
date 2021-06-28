@@ -1,6 +1,6 @@
 TARGET = px86
 PROGRAM = modrm-test.bin
-OBJS = main.o emulator_function.o instruction.o
+OBJS = main.o emulator_function.o instruction.o modrm.o
 
 CC = gcc
 ASM = nasm
