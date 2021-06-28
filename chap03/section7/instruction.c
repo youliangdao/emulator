@@ -21,6 +21,37 @@ void add_rm32_r32(Emulator* emu)
   set_rm32(emu, &modrm, rm32 + r32);
 }
 
+void push32(Emulator* emu, uint32_t value)
+{
+  uint32_t address =  get_register32(emu, ESP) - 4;
+  set_register32(emu, ESP, address);
+  set_memory32(emu, value, address);
+}
+
+void push_r32(Emulator* emu)
+{
+  uint8_t reg  = get_code8(emu, 0) - 0x50;
+  uint32_t r32 = get_register32(emu, reg);
+  push32(emu, r32);
+  emu->eip += 1;
+}
+
+uint32_t pop32(Emulator* emu)
+{
+  uint32_t address = emu->registers[ESP];
+  uint32_t ret = get_memory32(emu, address);
+  set_register32(emu, ESP, address + 4);
+  return ret;
+}
+
+void pop_r32(Emulator* emu)
+{
+  uint8_t reg = get_code8(emu, 0) - 0x58;
+
+  set_register32(emu, reg, pop32(emu));
+  emu->eip += 1;
+}
+
 void sub_rm32_imm8(Emulator* emu, ModRM* modrm)
 {
   uint32_t imm8 = (int32_t)get_sign_code8(emu, 0);
@@ -128,6 +159,18 @@ void init_instructions(void)
   memset(instructions, 0, sizeof(instructions));
 
   instructions[0x01] = add_rm32_r32;
+
+  for (int i = 0; i < 8; i++)
+  {
+    instructions[0x50 + i] = push_r32;
+  }
+
+  for (int i = 0; i < 8; i++)
+  {
+    instructions[0x58 + i] = pop_r32;
+  }
+
+
   instructions[0x83] = code_83;
   instructions[0x89] = mov_rm32_r32;
   instructions[0x8B] = mov_r32_rm32;
