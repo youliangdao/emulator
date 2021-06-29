@@ -98,6 +98,15 @@ void mov_r32_rm32(Emulator* emu)
   set_register32(emu, modrm.reg_index, get_rm32(emu, &modrm));
 }
 
+void mov_r32_imm32(Emulator* emu)
+{
+  uint8_t reg = get_code8(emu, 0) - 0xB8;
+  uint32_t value = get_code32(emu, 1);
+
+  emu->registers[reg] = value;
+  emu->eip += 5;
+}
+
 void ret(Emulator* emu)
 {
   emu->eip = pop32(emu);
@@ -114,13 +123,14 @@ void mov_rm32_imm32(Emulator* emu)
   set_rm32(emu, &modrm, value);
 }
 
-void mov_r32_imm32(Emulator* emu)
-{
-  uint8_t reg = get_code8(emu, 0) - 0xB8;
-  uint32_t value = get_code32(emu, 1);
 
-  emu->registers[reg] = value;
-  emu->eip += 5;
+void leave(Emulator* emu)
+{
+  uint32_t ebp = get_register32(emu, EBP);
+  set_register32(emu, ESP, ebp);
+  uint32_t esp = pop32(emu);
+  set_register32(emu, EBP, esp);
+  emu->eip += 1;
 }
 
 void call_rel32(Emulator* emu)
@@ -192,6 +202,7 @@ void init_instructions(void)
   }
   instructions[0xC3] = ret;
   instructions[0xC7] = mov_rm32_imm32;
+  instructions[0xC9] = leave;
   instructions[0xE8] = call_rel32;
   instructions[0xE9] = near_jump;
   instructions[0xEB] = short_jump;
