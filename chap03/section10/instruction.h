@@ -1,13 +1,15 @@
-#ifndef __INSTRUCTION_H__
-#define __INSTRUCTION_H__
+#ifndef INSTRUCTION_H_
+#define INSTRUCTION_H_
 
 #include "emulator.h"
 
+/* 命令セットの初期化関数 */
 void init_instructions(void);
 
-//1バイト機械語に対応する関数のポインタを格納した関数ポインタテーブルを作成
 typedef void instruction_func_t(Emulator*);
 
+/* x86命令の配列、opecode番目の関数がx86の
+   opcodeに対応した命令となっている */
 extern instruction_func_t* instructions[256];
 
 #endif
