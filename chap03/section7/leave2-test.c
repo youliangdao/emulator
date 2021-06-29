@@ -1,9 +1,11 @@
-int add(int a, int b)
+int add(void)
 {
+  int a = 2;
+  int b = 5;
   return a + b;
 }
 
 int main(void)
 {
-  return add(2, 5);
+  return add();
 }
