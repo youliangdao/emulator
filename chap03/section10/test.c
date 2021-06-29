@@ -1,13 +1,10 @@
-int abs(int a, int b){
-  if (a >= b) {
-    return a;
-  } else
-  {
-    return b;
+int sum(int a, int b){
+  int sum;
+  sum = 0;
+  while (a <= b){
+    sum += a;
+    a++;
   }
-}
 
-int main(void)
-{
-  return abs(5, 3);
+  return sum;
 }
