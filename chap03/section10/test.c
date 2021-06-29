@@ -1,13 +1,13 @@
-int abs(int i){
-  if (i >= 0) {
-    return i;
+int abs(int a, int b){
+  if (a < b) {
+    return b;
   } else
   {
-    return -i;
+    return a;
   }
 }
 
 int main(void)
 {
-  return abs(-3);
+  return abs(5, 3);
 }
