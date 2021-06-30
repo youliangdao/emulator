@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include "emulator_function.h"
 #include "io.h"
-#include "modrm.h"
 
 static int bios_to_terminal[8] = {
   30, 34, 32, 36, 31, 35, 33, 37
@@ -28,9 +27,7 @@ static void bios_video_teletype(Emulator* emu)
   int terminal_color;
   terminal_color = bios_to_terminal[color & 0x07];
   int bright = (color & 0x08) ? 1 : 0;
-  int len = sprintf(
-    buf, "\x1b[%d;%dm%c\x1b[0m\n", bright, terminal_color, ch
-  );
+  int len = sprintf(buf, "\x1b[%d;%dm%c\x1b[0m", bright, terminal_color, ch);
 
   put_string(buf, len);
 }
