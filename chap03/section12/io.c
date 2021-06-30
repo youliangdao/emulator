@@ -1,25 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+
+#include "instruction.h"
+#include "emulator.h"
+#include "emulator_function.h"
+
+#include "modrm.h"
 #include "io.h"
 
-#include <stdio.h>
-#include "emulator.h"
-
-uint8_t io_in8(uint16_t address){
+uint8_t in_io8(uint16_t address)
+{
   switch (address)
   {
   case 0x3f8:
     return getchar();
-    break;
 
   default:
     return 0;
   }
 }
 
-void io_out8(uint16_t address, uint8_t value){
-  switch (address)
-  {
-  case 0x3f8:
-    putchar(value);
-    break;
-  }
+void out_io8(uint16_t address, uint8_t value)
+{
+
 }
