@@ -200,6 +200,14 @@ static void near_jump(Emulator* emu)
     emu->eip += (diff + 5);
 }
 
+static void cmp_al_imm8(Emulator* emu)
+{
+    uint8_t al = get_register8(emu, AL);
+    uint32_t imm8 = get_code8(emu, 1);
+    uint64_t result = (uint64_t)al - (uint64_t)imm8;
+    update_eflags_sub(emu, al, imm8, result);
+}
+
 static void cmp_r32_rm32(Emulator* emu)
 {
     emu->eip += 1;
@@ -265,7 +273,7 @@ void init_instructions(void)
     instructions[0x01] = add_rm32_r32;
 
     instructions[0x3B] = cmp_r32_rm32;
-
+    instructions[0x3C] = cmp_al_imm8;
     for (i = 0; i < 8; i++) {
         instructions[0x50 + i] = push_r32;
     }
