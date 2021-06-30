@@ -35,7 +35,7 @@ static void bios_video_teletype(Emulator* emu)
   put_string(buf, len);
 }
 
-static void bios_video(Emulator* emu)
+void bios_video(Emulator* emu)
 {
   uint8_t func = get_register8(emu, AH);
   switch (func)
