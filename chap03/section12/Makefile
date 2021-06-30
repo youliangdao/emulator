@@ -1,5 +1,5 @@
 TARGET = px86
-PROGRAM = select.bin
+PROGRAM = in.bin out.bin select.bin
 OBJS = main.o emulator_function.o instruction.o modrm.o io.o
 
 CC = gcc
@@ -9,9 +9,6 @@ CFLAGS += -Wall
 
 .PHONY: all run
 all: $(TARGET) $(PROGRAM)
-
-run: $(TARGET) $(PROGRAM)
-	./$(TARGET) $(PROGRAM)
 
 %.bin: %.asm
 	$(ASM) -f bin -o $@ $<
