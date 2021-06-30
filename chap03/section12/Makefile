@@ -11,7 +11,7 @@ CFLAGS += -Wall
 all: $(TARGET) $(PROGRAM)
 
 run: $(TARGET) $(PROGRAM)
-	./$(TARGET) $(PROGRAM)
+	./$(TARGET) -q $(PROGRAM)
 
 %.bin: %.asm
 	$(ASM) -f bin -o $@ $<
