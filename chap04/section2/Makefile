@@ -1,9 +1,8 @@
 TARGET = px86
-PROGRAM = subroutine.bin
+PROGRAM = subroutine32.bin
 OBJS = main.o emulator_function.o instruction.o modrm.o io.o
 
 CC = gcc
-LD = ld
 ASM = nasm
 CFLAGS += -Wall
 
