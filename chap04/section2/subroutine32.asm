@@ -10,7 +10,7 @@ puts:
   cmp al, 0
   je puts_end
   mov ah, 0x5e
-  mov ebx, 15
+  mov ebx, 10
   int 0x10          ; BIOSを呼び出す
   jmp puts
 puts_end:
