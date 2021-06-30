@@ -31,6 +31,14 @@ static void mov_r32_rm32(Emulator* emu)
     set_r32(emu, &modrm, rm32);
 }
 
+static void mov_r32_imm8(Emulator* emu)
+{
+    uint8_t reg = get_code8(emu, 0) - 0xB0;
+    uint8_t value = get_code8(emu, 1);
+    set_register8(emu, reg, value);
+    emu->eip += 2;
+}
+
 static void add_rm32_r32(Emulator* emu)
 {
     emu->eip += 1;
@@ -283,6 +291,11 @@ void init_instructions(void)
     instructions[0x83] = code_83;
     instructions[0x89] = mov_rm32_r32;
     instructions[0x8B] = mov_r32_rm32;
+
+    for (int i = 0; i < 8; i++)
+    {
+      instructions[0xB0 + i] = mov_r32_imm8;
+    }
 
     for (i = 0; i < 8; i++) {
         instructions[0xB8 + i] = mov_r32_imm32;
