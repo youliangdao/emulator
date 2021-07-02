@@ -5,15 +5,10 @@
 #include "emulator_function.h"
 #include "io.h"
 
-static void put_string()
-{
-
-}
 
 static void bios_video_teletype(Emulator* emu)
 {
     uint8_t code = get_register8(emu, AL);
-    uint8_t color = get_register8(emu, BL);
 
     out_io8(0x3f8, code);
 }
