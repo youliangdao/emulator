@@ -9,6 +9,7 @@
 
 #include "modrm.h"
 #include "io.h"
+#include "bios.h"
 
 /* x86命令の配列、opecode番目の関数がx86の
    opcodeに対応した命令となっている */
